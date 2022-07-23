@@ -38,7 +38,7 @@ def judge__imagesBySVC( images=None, labels=None, trainMode=False, \
         print( img_train.shape, ans_train.shape )
         classifier.fit( img_train, ans_train )
         prd_test   = classifier.predict( img_test )
-        accuracy   = sklearn.metrics.accuracy_score( prd_test, ans_test )
+        accuracy   = sklearn.metrics.accuracy_score( prd_test, ans_test ) * 100.0
         with open( trainedModelFile, "wb" ) as f:
             pickle.dump( classifier, f )
         print( "\n[judge__imagesBySVC.py] trained model accuracy :: {} (%) \n".format(accuracy) )

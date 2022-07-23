@@ -42,6 +42,15 @@ def generate__testSheet( figsize=(1200,900), marker_size=50 ):
     for ik, bb in enumerate( bbs ):
         image[ bb[1]:bb[3], bb[0]:bb[2] ] = markers_imgs[ik]
 
+    xavg  = ( bbs[:,0] + bbs[:,2] ) * 0.5 
+    yavg  = ( bbs[:,1] + bbs[:,3] ) * 0.5
+    xyavg = np.concatenate( [xavg[:,None],yavg[:,None]], axis=1 )
+    import nkUtilities.save__pointFile as spf
+    ids       = np.arange( xyavg.shape[0] ) + 1
+    Data      = np.concatenate( [ids[:,None],xyavg], axis=1 )
+    outFile   = "dat/armarker_pos.dat"
+    spf.save__pointFile( outFile=outFile, Data=Data )
+    
     # ------------------------------------------------- #
     # --- [4] draw rectangular outline              --- #
     # ------------------------------------------------- #
@@ -77,6 +86,8 @@ def generate__testSheet( figsize=(1200,900), marker_size=50 ):
     for ik, coo in enumerate( fillhole ):
         image = cv2.circle( image, (coo[x_], coo[y_]), coo[rc_], black_color, \
                             thickness=-1 )
+    print( np.min( holeData[:,x_] ), np.max( holeData[:,x_] ) )
+    print( np.min( holeData[:,y_] ), np.max( holeData[:,y_] ) )
 
     # ------------------------------------------------- #
     # --- [7] save in a file                        --- #

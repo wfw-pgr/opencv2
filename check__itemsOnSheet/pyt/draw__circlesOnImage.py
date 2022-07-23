@@ -6,7 +6,8 @@ import numpy as np
 # ===  draw__circlesOnImage.py                          === #
 # ========================================================= #
 
-def draw__circlesOnImage( image=None, circles=None, colors=None, linewidth=4 ):
+def draw__circlesOnImage( image=None, circles=None, colors=None, \
+                          posit=None, radii  =None, linewidth=4 ):
 
     x0_,y0_,rc_ = 0, 1, 2
     
@@ -14,10 +15,14 @@ def draw__circlesOnImage( image=None, circles=None, colors=None, linewidth=4 ):
     # --- [1] check argument                        --- #
     # ------------------------------------------------- #
     if ( image   is None ): sys.exit( "[draw__circlesOnImage.py] image   == ???" )
-    if ( circles is None ): sys.exit( "[draw__circlesOnImage.py] circles == ???" )
+    if ( circles is None ):
+        if ( ( posit is not None ) and ( radii is not None ) ):
+            circles = np.concatenate( [posit,radii[:,None]], axis=1 )
+        else:
+            sys.exit( "[draw__circlesOnImage.py] circles == ???" )
     if ( colors  is None ):
         if   ( image.ndim == 3 ):
-            colors = np.repeat( np.array( [255,0,0], dtype=np.uint8 )[None,:], \
+            colors = np.repeat( np.array( [0,0,255], dtype=np.uint8 )[None,:], \
                                 circles.shape[0], axis=0 )
         elif ( image.ndim == 2 ):
             colors = np.repeat( np.array( [255], dtype=np.uint8 )[None,:], \

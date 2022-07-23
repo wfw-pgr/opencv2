@@ -63,6 +63,7 @@ def detect__circleCannyHough( image =None, iGauss=None, threshold=None, param1=N
     # ------------------------------------------------- #
     #  -- [3-1] Canny-Method                        --  #
     img      = cv2.Canny       ( img, threshold1=threshold[min_], threshold2=threshold[max_] )
+    img      = cv2.Canny       ( img, threshold1=threshold[min_], threshold2=threshold[max_] )
     if ( returnType.lower() == "canny" ): return( img )
     
     #  -- [3-2] Hough conversion                    --  #

@@ -1,6 +1,9 @@
-import sys
+import os, sys
 import cv2
 import numpy as np
+
+# return :: ( mask, polygon, bb )
+#           mask :: [  ]
 
 # ========================================================= #
 # ===  extract__polygonalRegion.py                      === #
@@ -8,8 +11,7 @@ import numpy as np
 
 def extract__polygonalRegion( image=None, polygon=None, bb=None, returnType="masked" ):
 
-
-    x_,y_     = 0, 1
+    x_, y_    = 0, 1
     black_rgb = ( 255,255,255 )
     black_val = 255
 
@@ -18,8 +20,15 @@ def extract__polygonalRegion( image=None, polygon=None, bb=None, returnType="mas
     # ------------------------------------------------- #
     if ( image   is None ): sys.exit( "[extract__polygonalyRegion.py] image   == ???" )
     if ( polygon is None ): sys.exit( "[extract__polygonalyRegion.py] polygon == ???" )
+    image_ = np.copy( image )
+    if   ( image_.ndim == 3 ):
+        image_ = cv2.cvtColor( image_, cv2.COLOR_BGR2GRAY )
 
-    mask    = np.zeros_like( image )
+
+    # ------------------------------------------------- #
+    # --- [2] polygon type check                    --- #
+    # ------------------------------------------------- #
+    mask    = np.zeros_like( image_ )
     if   ( type( polygon ) == list ):
         polygon = np.array( polygon )
     elif ( type( polygon ) == np.ndarray ):
@@ -27,22 +36,21 @@ def extract__polygonalRegion( image=None, polygon=None, bb=None, returnType="mas
     else:
         print( "[extract__polygonalyRegion.py] polygon is not list or numpy.ndarray " )
         sys.exit()
-    if ( polygon.ndim != 2 ):
+        
+    # ------------------------------------------------- #
+    # --- [3] polygon shape / bb type check         --- #
+    # ------------------------------------------------- #
+    nPolygon = polygon.shape[0]
+    if ( not( polygon.shape == (nPolygon,2) ) ):
         print( "[extract__polygonalyRegion.py] polygon's shape is not [nPolygon,2] " )
         sys.exit()
-    else:
-        if ( polygon.shape[1] != 2 ):
-            print( "[extract__polygonalyRegion.py] polygon's shape is not [nPolygon,2] " )
-            sys.exit()
-        else:
-            nPolygon = polygon.shape[0]
     if ( type(bb) == str ):
         if ( bb.lower() == "auto" ):
             bb = [ np.min( polygon[:,x_] ), np.min( polygon[:,y_] ), \
                    np.max( polygon[:,x_] ), np.max( polygon[:,y_] )  ]
         
     # ------------------------------------------------- #
-    # --- [2] generate mask                         --- #
+    # --- [4] generate mask                         --- #
     # ------------------------------------------------- #
     if   ( returnType.lower() in [ "mask"   ] ):
         mask      = cv2.fillConvexPoly( mask, polygon, color=black_rgb )
@@ -51,17 +59,17 @@ def extract__polygonalRegion( image=None, polygon=None, bb=None, returnType="mas
             polygon_       = np.copy( polygon )
             polygon_[:,x_] = polygon[:,x_] - bb[0]
             polygon_[:,y_] = polygon[:,y_] - bb[1]
-        return( mask, polygon_ )
+        return( mask, polygon_, bb )
 
     elif ( returnType.lower() in [ "masked" ] ):
         mask      = cv2.fillConvexPoly( mask, polygon, color=black_rgb )
-        masked    = np.where( mask==black_val, image, mask )
+        masked    = np.where( mask==black_val, image_, mask )
         if ( bb is not None ):
             masked         = masked[ bb[1]:bb[3], bb[0]:bb[2], ... ]
             polygon_       = np.copy( polygon )
             polygon_[:,x_] = polygon[:,x_] - bb[0]
             polygon_[:,y_] = polygon[:,y_] - bb[1]
-        return( masked, polygon_ )
+        return( masked, polygon_, bb )
 
     else:
         print( "[extract__polygonalyRegion.py] unknown returnType :: {} ".format( returnType ) )

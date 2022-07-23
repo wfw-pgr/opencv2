@@ -60,6 +60,7 @@ def generate__holeData():
     outFile   = "dat/holeData.dat"
     spf.save__pointFile( outFile=outFile, Data=coord )
     print( np.sum( coord[:,2] ) / coord.shape[0] )
+    
 
 # ========================================================= #
 # ===   Execution of Pragram                            === #

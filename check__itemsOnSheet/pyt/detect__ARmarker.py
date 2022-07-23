@@ -2,19 +2,23 @@ import cv2, os, sys
 import numpy as np
 
 
+# return :: 
+
 # ========================================================= #
 # ===  detect__ARmarker.py                              === #
 # ========================================================= #
 
-def detect__ARmarker( img_gray=None, markerType="aruco.DICT_4X4_50" ):
+def detect__ARmarker( image=None, markerType="aruco.DICT_4X4_50", reorder=None ):
 
     # ------------------------------------------------- #
-    # --- [0] argument check                        --- #
+    # --- [1] argument image check                  --- #
     # ------------------------------------------------- #
-    if ( img_gray is None ): sys.exit( "[detect__ARmarker.py] img_gray == ??? " )
+    if ( image is None ): sys.exit( "[detect__ARmarker.py] image == ??? " )
+    image_ = np.copy( image )
+    if ( image_.ndim == 3 ): image_ = cv2.cvtColor( image_, cv2.COLOR_BGR2GRAY )
 
     # ------------------------------------------------- #
-    # --- [1] call aruco ARmaker dictionary         --- #
+    # --- [2] call aruco ARmaker dictionary         --- #
     # ------------------------------------------------- #
     aruco    = cv2.aruco
     if   ( markerType == "aruco.DICT_4X4_50"  ):
@@ -23,15 +27,24 @@ def detect__ARmarker( img_gray=None, markerType="aruco.DICT_4X4_50" ):
         markers_dict  = aruco.getPredefinedDictionary( aruco.DICT_5X5_100 )
     else:
         print( "[detect__ARmarker.py] unknown markerType == {}".format( markerType ) )
+        print( "[detect__ARmarker.py] markerType :: [ aruco.DICT_4X4_50, aruco.DICT_5X5_100 ]" )
+        sys.exit()
 
     # ------------------------------------------------- #
-    # --- [2] detect AR marker                      --- #
+    # --- [3] detect AR marker                      --- #
     # ------------------------------------------------- #
-    corners, ids, rejectedImgPoints = aruco.detectMarkers( img_gray, markers_dict )
-    nMarker    = ids.shape[0]
-    marker_cnt = np.array( [ np.reshape( corners[iid], (4,2) ) for ik,iid in enumerate( ids.ravel() ) ] )
-    ids_cnt    = np.array( [ np.reshape( ids[iid]    , (1, ) ) for ik,iid in enumerate( ids.ravel() ) ] )
-    return( marker_cnt, ids_cnt )
+    corners, ids, rejectedImgPoints = aruco.detectMarkers( image_, markers_dict )
+    index    = np.argsort( np.reshape( ids, (-1) ) )
+    markers  = np.array( [ corners[iid][0,...] for iid in index ] )
+    ids      = np.array( [     ids[iid][0,...] for iid in index ] )
+
+    # ------------------------------------------------- #
+    # --- [4] return                                --- #
+    # ------------------------------------------------- #
+    if ( reorder is not None ):
+        markers = markers[ reorder ]
+        ids     = ids    [ reorder ]
+    return( markers, ids )
 
 
 # ========================================================= #
