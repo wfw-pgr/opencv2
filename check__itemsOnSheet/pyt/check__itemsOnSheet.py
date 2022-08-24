@@ -1,9 +1,8 @@
-import os, sys, subprocess, re
 import cv2
-import numpy as np
+import os, sys, subprocess, re
+import numpy                         as np
 import nkUtilities.load__pointFile   as lpf
 import nkUtilities.save__pointFile   as spf
-
 import extract__rectangularRegion    as err
 import draw__circlesOnImage          as dci
 
@@ -31,10 +30,10 @@ def check__itemsOnSheet():
     
     #  -- [1-3] load images                         --  #
     import load__figure as lfg
-    image      = lfg.load__figure    ( inpFile =const["main.inputFile"], returnType="bgr"   )
+    image      = lfg.load__figure( inpFile =const["main.inputFile"], returnType="bgr" )
 
     #  -- [1-4] load ARmarker/hole Position (ideal) --  #
-    markers_id = ( lpf.load__pointFile( inpFile=const["ARmarker.ideal.file"]       ) )[:,1:]
+    markers_id = ( lpf.load__pointFile( inpFile=const["ARmarker.ideal.file"]     ) )[:,1:]
     circles_id =   lpf.load__pointFile( inpFile=const["detectCircle.ideal.file"] )
 
     #  -- [1-5] load hole position      ( ideal )   --  #

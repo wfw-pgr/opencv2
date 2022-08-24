@@ -21,7 +21,7 @@ def load__figure( inpFile=None, returnType="bgr" ):
     # --- [2] pre-process for figure                --- #
     # ------------------------------------------------- #
     if   ( returnType.lower() == "bgr"  ):
-        return( img_bgr  )
+        return( img_bgr )
     elif ( returnType.lower() == "rgb"  ):
         return( cv2.cvtColor( img_bgr, cv2.COLOR_BGR2RGB  ) )
     elif ( returnType.lower() == "gray" ):
