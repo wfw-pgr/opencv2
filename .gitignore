@@ -2,4 +2,6 @@
 *.png
 *.mov
 *.mp4
+*.pyc
+*.DS_Store
 *.pickle_bin
