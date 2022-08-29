@@ -1,3 +1,5 @@
 *.jpg
 *.png
+*.mov
+*.mp4
 *.pickle_bin

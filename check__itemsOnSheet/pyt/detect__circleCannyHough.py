@@ -2,11 +2,20 @@ import cv2
 import os, sys
 import numpy   as np
 
+# iGauss    :: size of kernel for Gaussian Filtering 
+# threshold :: min-max value for Canny-Method.  [ 0.2, 0.8 ]
+# param1    :: param1 for Hough. Automatically Determined.
+# param2    :: param2 for Hough. Must Given.
+# dp        :: dot per inch for Hough Conversion.
+# minDist   :: minimum Distance between circles.   0.0~1.0
+# radiusRange :: radius range for circle.          0.0~1.0
+# normalized parameter :: normalize parameter or not.
+
 # ========================================================= #
 # ===  detect__circleCannyHough                         === #
 # ========================================================= #
 
-def detect__circleCannyHough( image =None, iGauss=None, threshold=None, param1=None, \
+def detect__circleCannyHough( image=None, iGauss=None, threshold=None, param1=None, \
                               dp=1.2, param2=0.2, minDist=0.1, radiusRange=[0.05,0.1], \
                               normalized_parameter=True, returnType="list", message=False ):
 
