@@ -1,0 +1,12 @@
+kent@maxwell ~/python/opencv2/evaluate__svm $ python pyt/accuracy_for_svm.py   
+[evaluate__accuracy.py] accuracy                     :: 0.9992432432432432
+[evaluate__accuracy.py] TPR  ( Truth Positive Rate ) :: 0.9972508591065292
+[evaluate__accuracy.py] FPR  ( False Positive Rate ) :: 0.0003848620910840282
+
+[evaluate__accuracy.py] confusion Matrix             :: 
+ Horizontal >> prediction, 
+ Vertical   >> Actual / Truth, 
+  ( TN =      15584 ),    ( FP =          6 )
+  ( FN =          8 ),    ( TP =       2902 )
+
+{'classifier': SVC(C=8.0, gamma=1e-07), 'accuracy': 0.9992432432432432, 'TPR': 0.9972508591065292, 'FPR': 0.0003848620910840282}

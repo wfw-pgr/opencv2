@@ -1,0 +1,7 @@
+# label			time_for_I/O		time_for_CannyHough	time_for_projection
+# label :: 1 == normal_CannyHough
+# label :: 2 == project_CannyHough
+# label :: 3 == ellipse_CannyHough
+1 			0.089253		0.13936			0.0
+2			0.062069		0.03042			0.04311
+# 3			0.063			9.50			0.0

@@ -21,7 +21,15 @@ def extract__rectangularRegion( image =None, bb=None   , center_pos=None, \
     if ( image   is None ): sys.exit( "[extract__rectangularyRegion.py] image   == ???" )
     if ( bb      is None ):
         if ( ( center_pos is not None ) and ( length is not None ) ):
-            leng  = np.repeat( length[:,None], 2, axis=1 )
+            if ( type(length) in [ int, float]  ):
+                leng = np.repeat( np.array( [length,length] )[None,:], \
+                                  center_pos.shape[0],axis=0 )
+            elif ( type(length) in [np.ndarray] ):
+                if ( length.ndim == 1 ):
+                    if   ( length.shape[0] == 2 ):
+                        leng = np.repeat( length[None,:], center_pos.shape[0], axis=0 )
+                    elif ( length.shape[0] == center_pos.shape[0] ):
+                        leng = np.repeat( length[:,None], 2, axis=1 )
             bb_11 = center_pos - ( 1.0 + margin ) * ( leng * 0.5 )
             bb_22 = center_pos + ( 1.0 + margin ) * ( leng * 0.5 )
             bb    = np.array ( np.concatenate( [bb_11,bb_22], axis=1 ), dtype=np.int32 )
@@ -29,9 +37,8 @@ def extract__rectangularRegion( image =None, bb=None   , center_pos=None, \
             sys.exit( "[extract__rectangularyRegion.py] bb , or center_pos and length ???" )
     if ( rescale is not None ):
         if ( type( rescale ) == [ tuple, list, np.ndarray ] ):
-            print( "[extract__rectangularRegion.py] rescale should be tuple, list, or numpy array" )
+            print( "[extract__rectangularRegion.py] rescale should be tuple, list or numpy array")
             sys.exit()
-        
     Lx, Ly = image.shape[1], image.shape[0]
     dim    = image.ndim
     
@@ -40,11 +47,13 @@ def extract__rectangularRegion( image =None, bb=None   , center_pos=None, \
     # ------------------------------------------------- #
     extractedImages = []
     for ik,hbb in enumerate( bb ):
-        img = image[ hbb[yfrom_]:hbb[ytill_], hbb[xfrom_]:hbb[xtill_], ... ]
+        xfrom, xtill = int( hbb[xfrom_] ), int( hbb[xtill_] )
+        yfrom, ytill = int( hbb[yfrom_] ), int( hbb[ytill_] )
+        img          = image[ yfrom:ytill, xfrom:xtill, ... ]
         extractedImages.append( img )
         
     if ( rescale is None ):
-        return( np.array( extractedImages ) )
+        return( extractedImages )
 
     # ------------------------------------------------- #
     # --- [3] rescale image                         --- #

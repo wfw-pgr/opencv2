@@ -1,5 +1,5 @@
 import os, sys, pickle
-import numpy as np
+import numpy                   as np
 import sklearn
 import sklearn.datasets
 import sklearn.model_selection as skms
@@ -11,52 +11,50 @@ import sklearn.metrics
 # === judge__imagesBySVC.py                             === #
 # ========================================================= #
 
-def judge__imagesBySVC( images=None, labels=None, trainMode=False, \
+def judge__imagesBySVC( images=None, labels=None, mode=None, \
                         trainedModelFile=None, train_size=0.8, shuffle=True, random_state=10 ):
 
     # ------------------------------------------------- #
     # --- [1] arguments check                       --- #
     # ------------------------------------------------- #
-    if ( images           is None ): sys.exit( "[judge__imagesBySVC.py] images == ???" )
+    if ( images           is None ): sys.exit( "[judge__imagesBySVC.py] images           == ???" )
     if ( trainedModelFile is None ): sys.exit( "[judge__imagesBySVC.py] trainedModelFile == ???" )
-
-    nImages    = images.shape[0]
-    images_svc = np.reshape( images, (nImages,-1) )
+    if ( mode             is None ): sys.exit( "[judge__imagesBySVC.py] mode             == ???" )
+    nImages    = len( images )
+    images_svc = np.reshape( np.array( images ), (nImages,-1) )
     
     # ------------------------------------------------- #
     # --- [2] train classifier / save classifier    --- #
     # ------------------------------------------------- #
-    if ( trainMode ):
-        print( "[judge__imagesBySVC.py] trainMode :: train and save model in file : {}"\
-               .format( trainedModelFile ) )
-        if ( labels is None ): sys.exit( "[judge__imagesBySVC.py] labels == ???" )
+    if ( mode.lower() == "train" ):
+        if ( labels is None ):
+            sys.exit( "[judge__imagesBySVC.py] [trainMode] labels == ???" )
         img_train, img_test = skms.train_test_split( images_svc, train_size=train_size, \
                                                      shuffle=shuffle, random_state=random_state )
-        ans_train, ans_test = skms.train_test_split( labels, train_size=train_size, \
+        ans_train, ans_test = skms.train_test_split( labels    , train_size=train_size, \
                                                      shuffle=shuffle, random_state=random_state )
+        print( "[judge__imagesBySVC.py] training is undergoing..... ", end="" )
         classifier = sklearn.svm.SVC()
-        print( img_train.shape, ans_train.shape )
         classifier.fit( img_train, ans_train )
         prd_test   = classifier.predict( img_test )
         accuracy   = sklearn.metrics.accuracy_score( prd_test, ans_test ) * 100.0
+        print( "   [Done]" )
+        print( "[judge__imagesBySVC.py] trained model accuracy :: {} (%) \n".format(accuracy) )
+        print( "[judge__imagesBySVC.py] trainMode :: train and save model in file : {}"\
+               .format( trainedModelFile ), end="" )
         with open( trainedModelFile, "wb" ) as f:
             pickle.dump( classifier, f )
-        print( "\n[judge__imagesBySVC.py] trained model accuracy :: {} (%) \n".format(accuracy) )
-        print( "[judge__imagesBySVC.py] trainMode :: train and save model in file : {}  [Done]"\
-               .format( trainedModelFile ) )
+        print( "   [Done]" )
         return()
         
     # ------------------------------------------------- #
-    # --- [3] load classifier                       --- #
+    # --- [3] predict answer using classifier       --- #
     # ------------------------------------------------- #
-    with open( trainedModelFile, "rb" ) as f:
-        classifier = pickle.load( f )
-        
-    # ------------------------------------------------- #
-    # --- [4] predict using classifier and return   --- #
-    # ------------------------------------------------- #
-    prd_test   = classifier.predict( images_svc )
-    return( prd_test )
+    if ( mode.lower() == "predict" ):
+        with open( trainedModelFile, "rb" ) as f:
+            classifier = pickle.load( f )
+        prd_test   = classifier.predict( images_svc )
+        return( prd_test )
 
 
 # ========================================================= #
